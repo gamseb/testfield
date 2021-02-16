@@ -1979,7 +1979,7 @@ def check_that_line(step, should_see_lines, action=None):
                 options = map(lambda x: x[2], get_options_for_table(world, columns))
                 options_txt = ', '.join(map(lambda x: '|'.join(x), options))
                 if should_see_lines:
-                    raise UniFieldElementException("I don't find: %s. My options where: %s" % (hashes, options_txt))
+                    raise UniFieldElementException("I don't find: %s. My options were: %s" % (hashes, options_txt))
                 else:
                     raise UniFieldElementException("I found : %s" % hashes)
 
