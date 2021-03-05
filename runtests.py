@@ -10,6 +10,11 @@ import os, os.path
 import utils, codecs
 import credentials
 import subprocess
+import logging
+import datetime
+
+logging.basicConfig(filename='logs/example.log', level=logging.DEBUG)
+logging.debug("Start: {}".format(datetime.datetime.now()))
 
 # http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python
 def eprint(*args, **kwargs):

@@ -1,20 +1,20 @@
-from credentials import *
+# from credentials import *
 
 import output
 from lettuce import *
 from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.common.exceptions import StaleElementReferenceException, ElementNotVisibleException
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
+# from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.common.exceptions import  ElementNotVisibleException # , StaleElementReferenceException
+# from selenium.webdriver.common.keys import Keys
+# from selenium.webdriver.support.ui import Select
+# from selenium.webdriver.support.ui import WebDriverWait
+# from selenium.webdriver.support import expected_conditions
 from utils import *
 import datetime
 import os
 import os.path
 import re
-import tempfile
+# import tempfile
 
 RESULTS_DIR = 'results/'
 ENV_DIR = 'instances/'
@@ -115,8 +115,8 @@ def check_that_no_loop_is_open(scenario):
 @before.all
 def connect_to_db():
     # WARNING: we need firefox at least Firefox 43. Otherwise, AJAX call seem to be asynchronous
-    from selenium.webdriver.firefox.options import Options
-    from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+    # from selenium.webdriver.firefox.options import Options
+    # from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 
     base_dir = os.path.dirname(__file__)
     file_path = os.path.join(base_dir, FILE_DIR)
@@ -312,10 +312,10 @@ def debug_scenarios(total):
     for scenario_result in total.scenario_results:
         scenario = scenario_result.scenario
         if scenario_result.passed:
-            print scenario.name, ": OK"
+            print("{}: OK".format(scenario.name))
         else:
-            print scenario.name, ": FAILED"
-            print "  steps:", str(scenario_result.steps_failed)
+            print("{}: FAILED".format(scenario.name))
+            print("  steps: {}".format(str(scenario_result.steps_failed)))
 
 
 '''
@@ -770,7 +770,7 @@ def fill_field_and_open(step, fieldname, content):
 @step('I store the downloaded file as "([^"]*)" when (.*)$')
 @handle_delayed_step
 def store_last_file(step, to_filename, other_step):
-    import os.path
+    # import os.path
     import os
 
     base_dir = os.path.dirname(__file__)
@@ -989,7 +989,7 @@ def click_until_not_available1(step, button, value, fieldname):
             # AssertionError is used if the frame is not the good one (because it was replaced with
             #  another one)
             pass
-            print e
+            print(e)
 
 
 # }%}
@@ -1222,12 +1222,12 @@ def click_on_button_and_close(step, button):
 
             elems = world.browser.find_elements_by_css_selector("button#save_source_lines")
 
-            print "Nb buttons = " + str(len(elems))
+            print("Nb buttons = " + str(len(elems)))
 
             if len(elems) == 1:
-                print elems[0].get_attribute("outerHTML")
+                print(elems[0].get_attribute("outerHTML"))
 
-            print "---> Let's try JS method"
+            print("---> Let's try JS method")
             world.browser.execute_script(
                 "buttonClicked('save_source_lines', 'object', 'multiple.sourcing.wizard', '', getNodeAttribute(this, 'confirm'), '', getNodeAttribute(this, 'context'));")
 
@@ -1380,7 +1380,7 @@ def see_popup(step, message_to_see):
                 reg = create_regex(message_to_see)
 
                 if re.match(reg, elem.text, flags=re.DOTALL) is None:
-                    print "No '%s' found in '%s'" % (message_to_see, elem.text)
+                    print("No '%s' found in '%s'" % (message_to_see, elem.text))
                     raise UniFieldElementException("No '%s' found in '%s'" % (message_to_see, elem.text))
 
                 # we cannot click on OK because the button might be hidden by another window
@@ -1516,7 +1516,7 @@ def get_pos_for_fieldname_4_editon(fieldname):
             time.sleep(TIME_TO_SLEEP)
 
         except StaleElementReferenceException as e:
-            print e
+            print(e)
             pass
 
     if right_pos is None:
@@ -1745,7 +1745,7 @@ def click_on_line(step, action, window_will_exist=True):
 
         # FIXME: The key/values could be wrong, because the same hash
         # could exist with a "_". Two different lines could have the same fingerprint.
-        key_value = map(lambda (a, b): '%s/%s' % (str(a), str(b)), i_hash.iteritems())
+        key_value = map(lambda (a, b): '%s/%s' % (str(a), str(b)), i_hash.items())
         key_value.sort()
         hash_key_value = '_'.join(key_value)
 
@@ -1951,7 +1951,7 @@ def check_that_line(step, should_see_lines, action=None):
                 options = map(lambda x: x[2], get_options_for_table(world, columns))
                 options_txt = ', '.join(map(lambda x: '|'.join(x), options))
                 if should_see_lines:
-                    raise UniFieldElementException("I don't find: %s. My options where: %s" % (hashes, options_txt))
+                    raise UniFieldElementException("I don't find: %s. My options were: %s" % (hashes, options_txt))
                 else:
                     raise UniFieldElementException("I found : %s" % hashes)
 
@@ -2303,7 +2303,7 @@ def open_translation_window(step, fieldname):
 
             break
         except (StaleElementReferenceException, ElementNotVisibleException) as e:
-            print e
+            print(e)
             pass
 
         tick()
