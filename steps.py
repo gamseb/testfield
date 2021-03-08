@@ -354,25 +354,6 @@ def go_home_page(step):
 
 
 def log_into(database_name, username, password):
-    def find_element(selector_type, selector_definition, timeout=30):
-        """
-        Wait for an element to appear and then return it
-        """
-        # wait for the element to load
-        try:
-            WebDriverWait(world.browser, timeout).until(
-                expected_conditions.element_to_be_clickable((selector_type, selector_definition)))
-        except TimeoutException:
-            # TODO: add handling
-            raise
-        # Get the element and return it
-        try:
-            element = world.browser.find_element(selector_type, selector_definition)
-        except NoSuchElementException:
-            # TODO: add handling
-            raise
-        else:
-            return element
 
     database_name = prefix_db_name(convert_input(world, database_name))
     username = convert_input(world, username)

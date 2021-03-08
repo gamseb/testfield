@@ -1,3 +1,5 @@
+from selenium.webdriver.support.wait import WebDriverWait
+
 from credentials import *
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import Select
@@ -5,6 +7,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchFrameException, NoSuchElementException, StaleElementReferenceException
+from selenium.webdriver.support import expected_conditions
+from lettuce import world # Imports the dictionary holding the selenium driver
 import datetime
 import time
 import re
@@ -234,15 +238,43 @@ def get_input(browser, fieldname, position=0):
     return idattr, my_input
 
 
+def find_element(selector_type, selector_definition, timeout=30):
+    """
+    Wait for an element to appear with a conditional wait, then return it
+    """
+    driver = world.browser
+    # wait for the element to load
+    try:
+        WebDriverWait(driver, timeout).until(
+            expected_conditions.element_to_be_clickable((selector_type, selector_definition)))
+    except TimeoutException:
+        print('The element: {0}, {1} is not visible after waiting {2} seconds'
+              .format(selector_type, selector_definition, timeout))
+        raise
+    # Get the element and return it
+    try:
+        element = driver.find_element(selector_type, selector_definition)
+    except NoSuchElementException:
+        print('It is not possible to interact with the element: {0}, {1}'.format(selector_type, selector_definition))
+        raise
+    else:
+        return element
+
+
 def get_elements(browser, tag_name=None, id_attr=None, class_attr=None, attrs=dict(), wait='', atleast=0):
     '''
+
+    !!! THIS FUNCTION IS DEPRECIATED AND IS ONLY LEFT FOR COMPATIBILITY REASONS !!!
+    !!! It should not be used for new things, because it is slow and lacks contextual wait !!!
+
     This method fetch a node among the DOM based on its attributes.
 
     You can indicate whether this method is expected to wait for this element to appear.
 
     Be careful: this method also returns hidden elements!
     '''
-
+    # ----------------------------
+    # Setting up the css_selector
     css_selector = ""
 
     css_selector += tag_name if tag_name is not None else "*"
@@ -284,6 +316,10 @@ def get_elements(browser, tag_name=None, id_attr=None, class_attr=None, attrs=di
 
 
 def get_element(browser, tag_name=None, id_attr=None, class_attr=None, attrs=dict(), wait='', position=None):
+    """
+    !!! THIS FUNCTION IS DEPRECIATED AND IS ONLY LEFT FOR COMPATIBILITY REASONS !!!
+    !!! It should not be used for new things, because it is slow and lacks contextual wait !!!
+    """
     elements = get_elements(browser, tag_name, id_attr, class_attr, attrs, wait, atleast=position or 0)
 
     if position is None:
@@ -307,6 +343,9 @@ def to_camel_case(text):
 
 def get_elements_from_text(element, tag_name, text, class_attr='', wait=''):
     '''
+    !!! THIS FUNCTION IS DEPRECIATED AND IS ONLY LEFT FOR COMPATIBILITY REASONS !!!
+    !!! It should not be used for new things, because it is slow and lacks contextual wait !!!
+
     This method fetch a node among the DOM based on its text.
 
     To find it, you must provide the name of the tag and its text.
@@ -670,7 +709,7 @@ def wait_until_not_loading(browser, wait="Loading takes too much time"):
 
 def convert_input(world, content, localdict=dict()):
     new_content = content
-    regex = '({{((?:\w+\()*)([^)]*?)((?:\)*))}})'
+    regex = '({{((?:\w+\()*)([^)]*?)((?:\)*))}})' # Matches '{{' then '<any text>' then any ')' (but not '(') then '}}'
 
     for full, functions_text, word, after in re.findall(regex, content):
         functions = functions_text.split('(')
