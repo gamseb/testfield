@@ -693,15 +693,17 @@ def fill_field(step, fieldname, content):
     # New way to fill a field by selecting it through id 
     if fieldname.startswith("id="):
         myId = fieldname.split("=")[1]
-        myElement = world.browser.find_element_by_id(myId)
+        myElement = find_element('id', myId)
 
         if myId is not None and myElement is not None and myElement.tag_name == "input":
 
-            #Sometimes, fields must be set more than once to be sure they are
+            # Sometimes, fields must be set more than once to be sure they are
             tick = monitor(world.browser, "Element not filled")
             while True:
                 tick()
-                myElement.send_keys((100*Keys.BACKSPACE) + content + Keys.TAB)
+                myElement.clear()
+                myElement.send_keys(content)
+                # myElement.send_keys((100*Keys.BACKSPACE) + content + Keys.TAB)
                 if myElement.get_attribute('value') == content:
                     return
     else:
