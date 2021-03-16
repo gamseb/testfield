@@ -476,7 +476,7 @@ def open_all_the_tables(world):
                 select = Select(element)
                 select.select_by_visible_text("500")
 
-                wait_until_not_loading(world.browser, wait="I cannot load the whole table")
+                wait_until_not_loading(wait="I cannot load the whole table")
 
     repeat_until_no_exception(world, _open_all_the_tables, StaleElementReferenceException)
 
